@@ -7,7 +7,6 @@ import textblob
 from textblob import TextBlob
 from textblob.en.inflect import singularize
 from textblob import Word
-from textblob import Word
 
 df_train = pd.read_csv('../dataset/Corona_NLP_train.csv')
 df_test = pd.read_csv('../dataset/Corona_NLP_test.csv')
