@@ -6,8 +6,6 @@ import re
 import nltk
 from nltk.corpus import stopwords
 
-#nltk.data.path.append("/Users/mattiadargenio/PycharmProjects/EstrazioneInfo/nltk")
-#nltk.download('stopwords')
 df_train = pd.read_csv('./dataset/Corona_NLP_train.csv')
 df_test = pd.read_csv('./dataset/Corona_NLP_test.csv')
 
@@ -40,6 +38,21 @@ def clean_tweet(tweet):
     return tweet
 
 
+# Download the stopwords dataset (only need to run this once)
+nltk.download('stopwords')
+
+# Define a function to remove stopwords from text
+stop_words = set(stopwords.words('english'))
+
+
+def remove_stopwords(text):
+    words = text.split()
+    filtered_words = [word for word in words if word.lower() not in stop_words]
+    return ' '.join(filtered_words)
+
+
 # Apply the clean_tweet function to the 'TweetAt' column
 df_train['OriginalTweet'] = df_train['OriginalTweet'].apply(clean_tweet)
+# Apply stopwords removal to your DataFrame
+df_train['OriginalTweet'] = df_train['OriginalTweet'].apply(remove_stopwords)
 print(df_train['OriginalTweet'])
