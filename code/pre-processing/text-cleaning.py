@@ -12,6 +12,9 @@ from textblob import Word
 df_train = pd.read_csv('../dataset/Corona_NLP_train.csv')
 df_test = pd.read_csv('../dataset/Corona_NLP_test.csv')
 
+print(df_train)
+print(f"->{df_train.isin(['NaN', 'None', 'none']).sum()}")
+print(df_train)
 
 def clean_tweet(tweet):
     # Remove URLs
