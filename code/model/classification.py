@@ -1,12 +1,23 @@
 import pandas as pd
 import numpy as np
 import tensorflow
+from tensorflow.keras.utils import to_categorical
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
 
 # Leggi il DataFrame
 df_train = pd.read_csv('../dataset/Corona_NLP_train_clean.csv')
 df_test = pd.read_csv('../dataset/Corona_NLP_test_clean.csv')
+#Merging data columns Extremely Neagtive Sentiment as Negative and Extremely Positive Sentiment as Positive.
+def merge(df):
+    df['Sentiment'].replace(to_replace='Extremely Negative',value='Negative',inplace=True)
+    df['Sentiment'].replace(to_replace='Extremely Positive',value='Positive',inplace=True)
+
+merge(df_train)
+merge(df_test)
+
+df_train['Sentiment'].unique()
+df_test['Sentiment'].unique()
 
 X_train = df_train.OriginalTweet
 Y_train = df_train.Sentiment
@@ -46,7 +57,6 @@ tokenizer = Tokenizer(num_words=50000,
                       oov_token='<UNK>',
                       document_count=0)
 tokenizer.fit_on_texts(X_train)
-tokenizer.fit_on_texts(Y_train)
 
 wordindex = tokenizer.word_index
 tokenizer_config = tokenizer.get_config()
@@ -67,35 +77,36 @@ print(train_padding.shape)
 print(Y_train.shape)
 
 from sklearn.preprocessing import OneHotEncoder
-#y_train = OneHotEncoder().fit_transform(Y_train)
-#print(y_train.shape)
-#y_test = OneHotEncoder().fit_transform(Y_test)
-#print(y_test.shape)
+y_train = to_categorical(Y_train, num_classes=3)
+print(y_train.shape)
+
+y_test = to_categorical(Y_test, num_classes=3)
+print(y_test.shape)
 
 
 #Building the model
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Embedding,Dropout, Bidirectional
+from keras.layers import GlobalAveragePooling1D
 
 
-"""
-MODELLO PER PARLARE DEI PROBLEMI RISCONTRATI
+
 # Building the BASELINE MODEL
 base_model = Sequential()
 base_model.add(Embedding(50000,128,input_length=train_padding.shape[1]))
 base_model.add(GlobalAveragePooling1D())
 base_model.add(Dense(8,activation='relu'))
-base_model.add(Dense(5,activation='softmax'))
+base_model.add(Dense(3,activation='softmax'))
 base_model.summary()
 
 #Compiling the model
 
 base_model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-y_train=np.array(y_train.toarray())
+y_train=np.array(y_train)
 train_padding=np.array(train_padding)
 #Fitting the model
 
-history_base = base_model.fit(train_padding,y_train ,epochs=1, validation_split=0.2)
+history_base = base_model.fit(train_padding,y_train ,epochs=10, validation_split=0.2)
 
 
 import matplotlib.pyplot as plt
@@ -125,45 +136,48 @@ plot_graphs(history_base, 'loss')
 plt.ylim(0, None)
 plt.show()
 
-"""
 
 """
 The model performs well on training data but has a significant difference b/w train data and validation data
 The model is overfit in nature
 """
 
-from keras.callbacks import EarlyStopping
 from keras.layers import GlobalAveragePooling1D
 
 regularise = tensorflow.keras.regularizers.l2(0.001)
 
 model_r = Sequential()
-model_r.add(Embedding(50000,128,input_length=train_padding.shape[1]))
+model_r.add(Embedding(50000, 128, input_length=train_padding.shape[1]))
 model_r.add(Dropout(0.5))
 model_r.add(GlobalAveragePooling1D())
-model_r.add(Dense(8,activation='relu',kernel_regularizer=regularise))
+model_r.add(Dense(8, activation='relu', kernel_regularizer=regularise))
 model_r.add(Dropout(0.5))
-model_r.add(Dense(5,activation='softmax'))
+model_r.add(Dense(3, activation='softmax'))  # Cambiato il numero di neuroni e la funzione di attivazione
 model_r.summary()
 
 #Compiling the model
-model_r.compile(loss='sparse_categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-
-
+model_r.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
 
 #Fitting the model
 
 from sklearn.model_selection import train_test_split
 
-# Dividi i dati manualmente in set di addestramento e di convalida
-X_train_split, X_val_split, y_train_split, y_val_split = train_test_split(
-    train_padding, Y_train, test_size=0.2, random_state=42)
+#Fitting the model
 
-# Addestramento del modello
-history_r = model_r.fit(X_train_split, y_train_split, epochs=20, validation_data=(X_val_split, y_val_split))
+history_r = model_r.fit(train_padding,y_train ,epochs=12, validation_split=0.2)
 
-score = model_r.evaluate(test_padding, Y_test.to_numpy())
 
+
+plt.figure(figsize=(15, 10))
+plt.subplot(1, 2, 1)
+plot_graphs(history_r, 'accuracy')
+plt.ylim(None, 1)
+plt.subplot(1, 2, 2)
+plot_graphs(history_r, 'loss')
+plt.ylim(0, None)
+
+y_test_categorical = to_categorical(Y_test, num_classes=3)
+score = model_r.evaluate(test_padding, y_test_categorical,verbose=0)
 print("Testing Accuracy(%): ", score[1]*100)
 
 y_pred = model_r.predict(test_padding)
@@ -174,9 +188,11 @@ y_test_labels = Y_test.to_numpy()
 from sklearn.metrics import confusion_matrix
 
 cm = confusion_matrix(y_test_labels, y_predicted_labels)
+
 import matplotlib.pyplot as plt
 import seaborn as sn
-labels=['Extremely Negative','Negative', 'Neutral','Positive','Extremely Positive']
+
+labels=['Negative', 'Neutral','Positive']
 plt.figure(figsize=(5,5))
 sn.heatmap(cm,  xticklabels=labels, yticklabels=labels, fmt='d', annot=True, cmap=plt.cm.Blues)
 plt.xlabel('Predicted')
