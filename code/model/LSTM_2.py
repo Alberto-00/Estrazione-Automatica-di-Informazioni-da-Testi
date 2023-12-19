@@ -16,9 +16,6 @@ from keras.utils import to_categorical
 df_train = pd.read_csv('/content/drive/MyDrive/Corona_NLP_train.csv')
 df_test = pd.read_csv('/content/drive/MyDrive/Corona_NLP_test.csv')
 
-df_train = df_train.loc[~df_train['Sentiment'].isin(['Extremely Positive', 'Extremely Negative'])]
-df_test = df_test.loc[~df_test['Sentiment'].isin(['Extremely Positive', 'Extremely Negative'])]
-
 # Encode labels
 encoder = LabelEncoder()
 df_train['Sentiment'] = encoder.fit_transform(df_train['Sentiment'])
@@ -32,11 +29,11 @@ X_train = pad_sequences(tokenizer.texts_to_sequences(df_train['OriginalTweet']),
 X_test = pad_sequences(tokenizer.texts_to_sequences(df_test['OriginalTweet']), maxlen=max_length, padding='post')
 
 # One-hot encode labels
-y_train = to_categorical(df_train['Sentiment'], num_classes=3)
-y_test = to_categorical(df_test['Sentiment'], num_classes=3)
+y_train = to_categorical(df_train['Sentiment'], num_classes=5)
+y_test = to_categorical(df_test['Sentiment'], num_classes=5)
 
 model_path = ('/home/alberto/Documenti/GitHub/Estrazione-Automatica-di-Informazioni-da-Testi/'
-              'code/model/pre-trained/saved_model_3.h5')
+              'code/model/pre-trained/saved_model.h5')
 
 if os.path.exists(model_path):
     model = load_model(model_path)
@@ -52,7 +49,7 @@ else:
         Bidirectional(LSTM(64, dropout=0.5, recurrent_dropout=0.5)),
         Dense(64, activation='relu'),
         Dropout(0.5),
-        Dense(3, activation='softmax')
+        Dense(5, activation='softmax')
     ])
 
     model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=0.001), metrics=['accuracy'])
@@ -64,11 +61,15 @@ else:
     history = model.fit(X_train, y_train, batch_size=64, epochs=50,
                         validation_split=0.2, callbacks=[early_stopping])
 
+    # Salva il modello su disco
+    model.save('/home/alberto/Documenti/GitHub/Estrazione-Automatica-di-Informazioni-da-Testi/'
+               'code/model/pre-trained/saved_model_5.h5')
+
 # Evaluate the model
 y_pred = model.predict(X_test)
 y_predicted_labels = np.argmax(y_pred, axis=1)
 y_test_labels = np.argmax(y_test, axis=1)
 
 print('\n================= Classification Report ========================\n')
-target_names = ['Class Negative', 'Class Neutral', 'Class Positive']
+target_names = ['Class Negative', 'Class Neutral', 'Class Positive', 'Extremely Positive', 'Extremely Negative']
 print(classification_report(y_test_labels, y_predicted_labels, target_names=target_names))

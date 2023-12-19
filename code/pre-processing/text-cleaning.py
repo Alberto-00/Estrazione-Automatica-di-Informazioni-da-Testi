@@ -2,9 +2,6 @@ import pandas as pd
 import re
 import nltk
 from nltk.corpus import stopwords
-import textblob as tb
-import textblob
-from textblob import TextBlob
 from textblob.en.inflect import singularize
 from textblob import Word
 
@@ -14,6 +11,7 @@ df_test = pd.read_csv('../dataset/Corona_NLP_test.csv')
 print(df_train)
 print(f"->{df_train.isin(['NaN', 'None', 'none']).sum()}")
 print(df_train)
+
 
 def clean_tweet(tweet):
     # Remove URLs
@@ -68,9 +66,9 @@ df_test['OriginalTweet'] = df_test['OriginalTweet'].apply(clean_tweet)
 # Apply stopwords removal to your DataFrame
 df_test['OriginalTweet'] = df_test['OriginalTweet'].apply(remove_stopwords)
 
-print(df_train.duplicated())#verifico se ci sono duplicati
-df_train.dropna(inplace=True) #rimuovo le righe con valore NULL
-df_train.drop_duplicates(inplace=True)#elimino duplicati
+print(df_train.duplicated())  # verifico se ci sono duplicati
+df_train.dropna(inplace=True)  # rimuovo le righe con valore NULL
+df_train.drop_duplicates(inplace=True)  # elimino duplicati
 
 print(df_train.head(20))
 df_train = df_train.drop('UserName', axis=1)
@@ -79,18 +77,21 @@ df_train = df_train.drop('Location', axis=1)
 df_train = df_train.drop('TweetAt', axis=1)
 print(df_train.head(20))
 print(df_train.info())
+
 print(df_test.head(20))
-df_test= df_test.drop('UserName', axis=1)
+df_test = df_test.drop('UserName', axis=1)
 df_test = df_test.drop('ScreenName', axis=1)
 df_test = df_test.drop('Location', axis=1)
 df_test = df_test.drop('TweetAt', axis=1)
 print(df_test.head(20))
 
 print(df_train.head(20))
-df_train['OriginalTweet'] = df_train['OriginalTweet'].apply(lambda x: ' '.join([singularize(item) for item in x.split()]))
+df_train['OriginalTweet'] = df_train['OriginalTweet'].apply(
+    lambda x: ' '.join([singularize(item) for item in x.split()]))
 print(df_train.head(20))
 
-df_train['OriginalTweet'] = df_train['OriginalTweet'].apply(lambda x: ' '.join([Word(item).lemmatize("v") for item in x.split()]))
+df_train['OriginalTweet'] = df_train['OriginalTweet'].apply(
+    lambda x: ' '.join([Word(item).lemmatize("v") for item in x.split()]))
 print(df_train.head(20))
 
 df_train.to_csv('../dataset/Corona_NLP_train_clean.csv', index=False)
