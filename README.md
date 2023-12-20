@@ -14,10 +14,10 @@ The first task performed was to identify the dataset to be used for the task int
 Finally, BERT was implemented and the following were compared the results of the different models.
 
 ##  2  Approach
+In this section we will go on to discuss the implementation parts. In particular, we will discuss how data cleaning was done and what models were used for classification.
 
-### 2.1 Dataset
-
-### 2.2 Pre Processing
+### 2.1 Pre Processing
+For the data cleaning phase, the <code>cleantweet(tweet)</code> function is defined to remove URLs, mentions, hashtags, special characters, non-ASCII characters, and convert text to lowercase. Stopwords and other language data are downloaded via the nltk module. The <code>removestopwords(text)</code> function is defined to remove stopwords from a text. The defined cleaning operations are applied to the 'OriginalTweet' column of both DataFrames (<code>df_train</code>, used for training the mod ello and <code>df_test</code>, used, on the other hand, for testing).
 
 ### 2.3 LSTM
 
