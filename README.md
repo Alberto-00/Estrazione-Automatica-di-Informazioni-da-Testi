@@ -23,4 +23,9 @@ For the data cleaning phase, the <code>cleantweet(tweet)</code> function is defi
 
 ### 2.4 BERT
 
-
+## 3 Author & Contacts
+| Name | Description |
+| --- | --- |
+| <p dir="auto"><strong>Alberto Montefusco</strong> |<br>Developer - <a href="https://github.com/Alberto-00">Alberto-00</a></p><p dir="auto">Email - <a href="mailto:a.montefusco28@studenti.unisa.it">a.montefusco28@studenti.unisa.it</a></p><p dir="auto">LinkedIn - <a href="https://www.linkedin.com/in/alberto-montefusco">Alberto Montefusco</a></p><p dir="auto">My WebSite - <a href="https://alberto-00.github.io/">alberto-00.github.io</a></p><br>|
+| <p dir="auto"><strong>Alessandro Aquino</strong> |<br>Developer   - <a href="https://github.com/AlessandroUnisa">AlessandroUnisa</a></p><p dir="auto">Email - <a href="mailto:a.aquino33@studenti.unisa.it">a.aquino33@studenti.unisa.it</a></p><p dir="auto">LinkedIn - <a href="https://www.linkedin.com/in/alessandro-aquino-62b74218a/">Alessandro Aquino</a></p><br>|
+| <p dir="auto"><strong>Mattia d'Argenio</strong> |<br>Developer   - <a href="https://github.com/mattiadarg">mattiadarg</a></p><p dir="auto">Email - <a href="mailto:m.dargenio5@studenti.unisa.it">m.dargenio5@studenti.unisa.it</a></p><p dir="auto">LinkedIn - <a href="https://www.linkedin.com/in/mattia-d-argenio-a57849255/)https://www.linkedin.com/in/mattia-d-argenio-a57849255/">Mattia d'Argenio</a></p><br>|
