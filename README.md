@@ -41,7 +41,7 @@ python -m spacy init fill-config dataset/SMS-NER-Dataset-165-Annotations/base_co
 
 After that, it will start the training phase and finally the of testing by running the command:
 ```
-python -m spacy train config.cfg -output ./output -paths.train train.spacy -paths.dev test.spacy
+python -m spacy train config.cfg -output ./output -paths.train train.spacy -paths.dev test.spacy --gpu-id 0
 ```
 
 To conclude, we print the metrics produced by the best model by running the command:
