@@ -50,7 +50,7 @@ python -m spacy benchmark accuracy model/large/model-best model/large/test.spacy
 ```
 
 ## 3 Report
-The report can be found at the follow link: a href="https://github.com/Alberto-00/Estrazione-Automatica-di-Informazioni-da-Testi">Report</a>.
+The report can be found at the follow link: <a href="https://github.com/Alberto-00/Estrazione-Automatica-di-Informazioni-da-Testi/blob/main/Estrazione_automatica_di_informazione_dai_testi.pdf">Report</a>.
 
 ## 4 Author & Contacts
 | Name | Description |
